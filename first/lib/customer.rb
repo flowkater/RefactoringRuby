@@ -27,7 +27,7 @@ class Customer
 			when Movie::CHILDRENS
 				this_amount += 1.5
 				this_amount += (element.days_rented - 3) * 1.5 if element.days_rented > 3
-			end
+			end 
 
 			# 적립 포인트를 더함
 			frequent_renter_points += 1
