@@ -15,19 +15,18 @@ class Customer
 		total_amount, frequent_renter_points = 0, 0
 		result = "고객 #{@name}의 대여 기록\n"
 		@rentals.each do |element|
-			this_amount = 0
-
 			# 영화 종류별 내용을 각각 구함
-			case element.movie.price_code
-			when Movie::REGULAR
-				this_amount += 2
-				this_amount += (element.days_rented - 2) * 1.5 if element.days_rented > 2
-			when Movie::NEW_RELEASE
-				this_amount += element.days_rented * 3
-			when Movie::CHILDRENS
-				this_amount += 1.5
-				this_amount += (element.days_rented - 3) * 1.5 if element.days_rented > 3
-			end 
+			this_amount = amount_for(element)
+			# case element.movie.price_code
+			# when Movie::REGULAR
+			# 	this_amount += 2
+			# 	this_amount += (element.days_rented - 2) * 1.5 if element.days_rented > 2
+			# when Movie::NEW_RELEASE
+			# 	this_amount += element.days_rented * 3
+			# when Movie::CHILDRENS
+			# 	this_amount += 1.5
+			# 	this_amount += (element.days_rented - 3) * 1.5 if element.days_rented > 3
+			# end
 
 			# 적립 포인트를 더함
 			frequent_renter_points += 1
@@ -43,5 +42,19 @@ class Customer
 		result += "대여료는 #{total_amount}입니다.\n"
 		result += "적립 포인트는 #{frequent_renter_points}입니다."
 		result
+	end
+
+	def amount_for(element)
+		this_amount = 0
+		case element.movie.price_code
+		when Movie::REGULAR
+			this_amount += 2
+			this_amount += (element.days_rented - 2) * 1.5 if element.days_rented > 2
+		when Movie::NEW_RELEASE
+			this_amount += element.days_rented * 3
+		when Movie::CHILDRENS
+			this_amount += 1.5
+			this_amount += (element.days_rented - 3) * 1.5 if element.days_rented > 3
+		end
 	end
 end
