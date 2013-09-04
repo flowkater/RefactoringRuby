@@ -15,7 +15,7 @@ class Customer
 		total_amount, frequent_renter_points = 0, 0
 		result = "고객 #{@name}의 대여 기록\n"
 		@rentals.each do |element|
-			this_amount = amount_for(element)
+			this_amount = element.charge
 
 			# 적립 포인트를 더함
 			frequent_renter_points += 1
@@ -30,22 +30,6 @@ class Customer
 		# footer 행 추가
 		result += "대여료는 #{total_amount}입니다.\n"
 		result += "적립 포인트는 #{frequent_renter_points}입니다."
-		result
-	end
-
-	# 영화 종류별 내용을 각각 구함
-	def amount_for(rental)
-		result = 0
-		case rental.movie.price_code
-		when Movie::REGULAR
-			result += 2
-			result += (rental.days_rented - 2) * 1.5 if rental.days_rented > 2
-		when Movie::NEW_RELEASE
-			result += rental.days_rented * 3
-		when Movie::CHILDRENS
-			result += 1.5
-			result += (rental.days_rented - 3) * 1.5 if rental.days_rented > 3
-		end
 		result
 	end
 end
