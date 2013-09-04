@@ -1,5 +1,4 @@
 ## 첫번째 리팩토링
-### statement 메서드 분해와 기능 재분배
 - 메서드 추출(Extract Method)
 - 메서드 이동(Move Method)
 - 임시 변수를 메서드 호출로 전환(Replace Temp with Query)
