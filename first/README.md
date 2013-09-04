@@ -3,6 +3,7 @@
 - 메서드 추출(Extract Method)
 - 메서드 이동(Move Method)  
 - 임시 변수를 메서드 호출로 전환(Replace Temp with Query)  
+- 루프를 컬렉션 클로저 메서드로 전환(Replace Loop with Collection)  
 ```ruby
 def statement
 	total_amount, frequent_renter_points = 0, 0
@@ -203,6 +204,12 @@ class Customer
 	end	
 end
 ```
+이번에도 성능 이슈가 있는데 리팩토링으로 코드를 간결화한 후에 프로파일러를 사용해서 성능 문제를 처리하면 된다.  
+문제가 생겼다. 영화 종류를 더 다양하게 추가하고 가격 책정 방식을 바꾸고 싶은데 지금 구조에서는 일일이 다 추가를 해주어야한다. 리팩토링을 해보자.
+일단 Rental에 있는 charge 메서드를 Movie 로 옮겼다. charge 메서드는 대여 기간과 영화 종류가 사용되는데 영화 종류가 바뀔 요구 사항이 있으니 Movie 클래스로의 이동이 적절하다.  
+적립 포인트 계산 부분(frequent_renter_points)도 같이 옮기는 것이 맞다.  
+
+
 
 
 
