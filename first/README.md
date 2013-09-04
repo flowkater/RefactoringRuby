@@ -1,7 +1,8 @@
 ## 첫번째 리팩토링
 ### statement 메서드 분해와 기능 재분배
 - 메서드 추출(Extract Method)
-
+- 메서드 이동(Move Method)  
+- 임시 변수를 메서드 호출로 전환(Replace Temp with Query)  
 ```ruby
 def statement
 	total_amount, frequent_renter_points = 0, 0
@@ -173,7 +174,45 @@ end
 
 ### statement code => frequent_renter_points += element.frequent_renter_points
 ```
-** 리팩토링 각 단계는 소규모여야 실수가 생길 가능성이 줄어서 좋다. 할 때마다 테스트를 실행해주자 **
+** 리팩토링 각 단계는 소규모여야 실수가 생길 가능성이 줄어서 좋다. 할 때마다 테스트를 실행해주자 **  
+  
+임시 변수를 메서드 호출로 전환(Replace Temp with Query)으로 total_amount 와 frequent_renter_points 를 질의 메서드로 바꿔보자.  
+total_charge 에서 ** 루프를 컬렉션 클로저 메서드로 전환(Replace Loop with Collection) ** 으로 훨씬 간단하게 리팩토링하였다. frequent_renter_points 도 마찬가지로 바꾸었다.  
+```ruby
+class Customer
+	def statement
+		result = "고객 #{@name}의 대여 기록\n"
+		@rentals.each do |element|
+			# 이번 대여의 계산 결과를 표시
+			result += "\t" + element.movie.title + "\t" + element.charge.to_s + "\n"
+		end
+		# footer 행 추가
+		result += "대여료는 #{total_charge}입니다.\n"
+		result += "적립 포인트는 #{frequent_renter_points}입니다."
+		result
+	end
+
+	private
+
+	def total_charge
+		@rentals.inject(0){|sum, rental| sum + rental.charge}
+	end
+
+	def frequent_renter_points
+		@rentals.inject(0){sum, rental| sum + rental.frequent_renter_points }
+	end	
+end
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
