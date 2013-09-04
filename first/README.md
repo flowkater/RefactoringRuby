@@ -115,7 +115,7 @@ def statement
 	total_amount, frequent_renter_points = 0, 0
 	result = "고객 #{@name}의 대여 기록\n"
 	@rentals.each do |element|
-		this_amount = element.charge
+		this_amount = element.charge ## this_amount
 
 		# 적립 포인트를 더함
 		frequent_renter_points += 1
@@ -124,8 +124,8 @@ def statement
 			frequent_renter_points += 1
 		end
 		# 이번 대여의 계산 결과를 표시
-		result += "\t" + element.movie.title + "\t" + this_amount.to_s + "\n"
-		total_amount += this_amount
+		result += "\t" + element.movie.title + "\t" + this_amount.to_s +  "\n" ## this_amount
+		total_amount += this_amount ## this_amount
 	end
 	# footer 행 추가
 	result += "대여료는 #{total_amount}입니다.\n"
@@ -133,9 +133,30 @@ def statement
 	result
 end
 ```
-
-
-
+가끔 새 메서드로 처리를 넘기도록 기존 메서드를 놔둘 때도 있다. 메서드가 public 형이면서 나머지 클래스의 인터페이스를 건드리지 않아야 할 때는 이렇게 하는 것이 좋다.  
+위 코드에서 this_amount 가 중복되는 것을 볼 수 있다.  
+** 임시변수를 메서드 호출로 전환(Replace Temp with Query)
+```ruby
+def statement
+	total_amount, frequent_renter_points = 0, 0
+	result = "고객 #{@name}의 대여 기록\n"
+	@rentals.each do |element|
+		# 적립 포인트를 더함
+		frequent_renter_points += 1
+		# 최신물을 이틀 이상 대여하면 보너스 포인트를 더함
+		if element.movie.price_code == Movie::NEW_RELEASE && element.days_rented >1
+			frequent_renter_points += 1
+		end
+		# 이번 대여의 계산 결과를 표시
+		result += "\t" + element.movie.title + "\t" + element.charge.to_s + "\n" ####### change
+		total_amount += element.charge ####### change
+	end
+	# footer 행 추가
+	result += "대여료는 #{total_amount}입니다.\n"
+	result += "적립 포인트는 #{frequent_renter_points}입니다."
+	result
+end
+```
 
 
 

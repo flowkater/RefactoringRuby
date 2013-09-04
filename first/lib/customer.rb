@@ -15,8 +15,6 @@ class Customer
 		total_amount, frequent_renter_points = 0, 0
 		result = "고객 #{@name}의 대여 기록\n"
 		@rentals.each do |element|
-			this_amount = element.charge
-
 			# 적립 포인트를 더함
 			frequent_renter_points += 1
 			# 최신물을 이틀 이상 대여하면 보너스 포인트를 더함
@@ -24,8 +22,8 @@ class Customer
 				frequent_renter_points += 1
 			end
 			# 이번 대여의 계산 결과를 표시
-			result += "\t" + element.movie.title + "\t" + this_amount.to_s + "\n"
-			total_amount += this_amount
+			result += "\t" + element.movie.title + "\t" + element.charge.to_s + "\n"
+			total_amount += element.charge
 		end
 		# footer 행 추가
 		result += "대여료는 #{total_amount}입니다.\n"
