@@ -37,23 +37,26 @@ def statement
 	result
 end
 ```
-case 문을 제일 먼저 리팩토링 해보자
+case 문을 제일 먼저 리팩토링 해보자. element 변수명이 애매해서 넘어오는 파라미터인 rental로 변수명을 바꾸었다.  
+** 직관적인 코드를 위한 핵심요소가 바로 변수명이다. **
 ```ruby
 # 영화 종류별 내용을 각각 구함
-def amount_for(element)
-	this_amount = 0
-	case element.movie.price_code
+def amount_for(rental)
+	result = 0
+	case rental.movie.price_code
 	when Movie::REGULAR
-		this_amount += 2
-		this_amount += (element.days_rented - 2) * 1.5 if element.days_rented > 2
+		result += 2
+		result += (rental.days_rented - 2) * 1.5 if rental.days_rented > 2
 	when Movie::NEW_RELEASE
-		this_amount += element.days_rented * 3
+		result += rental.days_rented * 3
 	when Movie::CHILDRENS
-		this_amount += 1.5
-		this_amount += (element.days_rented - 3) * 1.5 if element.days_rented > 3
-	end 
+		result += 1.5
+		result += (rental.days_rented - 3) * 1.5 if rental.days_rented > 3
+	end
+	result
 end
 ```
+위 메서드 추출을 통해서 좀 더 줄어든 statement 메서드를 볼 수 있다.  
 ```ruby
 def statement
 	total_amount, frequent_renter_points = 0, 0

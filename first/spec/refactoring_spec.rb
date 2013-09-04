@@ -49,6 +49,10 @@ describe "Refactoring" do
 			customer_carter.statement.should == "고객 Carter의 대여 기록\n\t프리퀀시\t3.5\n대여료는 3.5입니다.\n적립 포인트는 1입니다."
 			customer_carter.add_rental(rental_new_release_one)
 			customer_carter.statement.should == "고객 Carter의 대여 기록\n\t프리퀀시\t3.5\n\t나우유씨미\t3\n대여료는 6.5입니다.\n적립 포인트는 2입니다."
+			customer_carter.add_rental(rental_childrens_four)
+			customer_carter.add_rental(rental_childrens_three)
+
+			customer_carter.statement.should == "고객 Carter의 대여 기록\n\t프리퀀시\t3.5\n\t나우유씨미\t3\n\t드래곤볼\t3.0\n\t드래곤볼\t1.5\n대여료는 11.0입니다.\n적립 포인트는 4입니다."
 		end
 	end
 end
