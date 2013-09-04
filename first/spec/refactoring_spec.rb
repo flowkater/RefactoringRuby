@@ -18,6 +18,7 @@ describe "Refactoring" do
 
 	let(:customer_guest) {Customer.new("Guest")}
 	let(:customer_carter) {Customer.new("Carter")}
+	let(:rental_record_string){"고객 Carter의 대여 기록"}
 
 	describe "test" do
 		it "customer test" do
@@ -36,15 +37,18 @@ describe "Refactoring" do
 		end
 
 		it "retal test" do
-			rental_regular_over.movie.title.should == "프리퀀시"
-			rental_regular_over.days_rented.should > 2
-			rental_regular_under.days_rented.should < 2
+			rental_regular_three.movie.title.should == "프리퀀시"
+			rental_regular_three.days_rented.should > 2
+			rental_regular_one.days_rented.should < 2
 		end
 	end
 
 	describe "statement" do
 		it "when movie regular 3day more" do
-			customer_carter.add_rental rental_regular_three
+			customer_carter.add_rental(rental_regular_three)
+			customer_carter.statement.should == "고객 Carter의 대여 기록\n\t프리퀀시\t3.5\n대여료는 3.5입니다.\n적립 포인트는 1입니다."
+			customer_carter.add_rental(rental_new_release_one)
+			customer_carter.statement.should == "고객 Carter의 대여 기록\n\t프리퀀시\t3.5\n\t나우유씨미\t3\n대여료는 6.5입니다.\n적립 포인트는 2입니다."
 		end
 	end
 end

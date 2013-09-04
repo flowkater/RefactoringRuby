@@ -4,7 +4,7 @@ class Customer
 
 	def initialize(name)
 		@name = name
-		@rentals = []		
+		@rentals = []
 	end	
 
 	def add_rental(arg)
