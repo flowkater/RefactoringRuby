@@ -157,9 +157,23 @@ def statement
 	result
 end
 ```
+메서드 호출 중복으로 성능 이슈가 생긴다. 하지만 성능 문제를 이런 관점에서 바라보는 것은 바람직하지 않다. 리팩토링을 할 때는 명료성에 최우선적으로 집중하고, 각 작용에 따른 성능 문제는 그 다음에 생각해야 한다.  
+** 이 리팩토링에서 오히려 더 큰 문제는 charge 메서드가 반드시 멱등성(연산을 가해도 변하지 않는 성질)을 가져야 한다. **
+  
+임시 변수들을 제거하면 데이터 입출력 방법이 아니라 코드의 의도에 더 확실히 집중할 수 있다.  
+  
+적립 포인트 계산 부분을 **메서드 추출(Extract Method)** 기법을 이용하여 뽑아보자.
+```ruby
+class Rental
+	def frequent_renter_points
+		# 최신물을 이틀 이상 대여하면 보너스 포인트를 더함
+		movie.price_code == Movie::NEW_RELEASE && days_rented > 1 ? 2 : 1
+	end	
+end
 
-
-
+### statement code => frequent_renter_points += element.frequent_renter_points
+```
+** 리팩토링 각 단계는 소규모여야 실수가 생길 가능성이 줄어서 좋다. 할 때마다 테스트를 실행해주자 **
 
 
 
