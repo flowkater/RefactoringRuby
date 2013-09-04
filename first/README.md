@@ -208,7 +208,41 @@ end
 문제가 생겼다. 영화 종류를 더 다양하게 추가하고 가격 책정 방식을 바꾸고 싶은데 지금 구조에서는 일일이 다 추가를 해주어야한다. 리팩토링을 해보자.
 일단 Rental에 있는 charge 메서드를 Movie 로 옮겼다. charge 메서드는 대여 기간과 영화 종류가 사용되는데 영화 종류가 바뀔 요구 사항이 있으니 Movie 클래스로의 이동이 적절하다.  
 적립 포인트 계산 부분(frequent_renter_points)도 같이 옮기는 것이 맞다.  
+```ruby
+class Movie
+	def charge(days_rented)
+		result = 0
+		case price_code
+		when REGULAR
+			result += 2
+			result += (days_rented - 2) * 1.5 if days_rented > 2
+		when NEW_RELEASE
+			result += days_rented * 3
+		when CHILDRENS
+			result += 1.5
+			result += (days_rented - 3) * 1.5 if days_rented > 3
+		end
+		result
+	end
 
+	def frequent_renter_points(days_rented)
+		# 최신물을 이틀 이상 대여하면 보너스 포인트를 더함
+		price_code == NEW_RELEASE && days_rented > 1 ? 2 : 1
+	end
+end
+
+class Rental
+	def frequent_renter_points
+		movie.frequent_renter_points(days_rented)
+	end
+	
+
+	def charge
+		movie.charge(days_rented)
+	end
+end
+```
+끝으로 상속 적용을 하는 데 단순히 상속 구조가 아닌 State Pattern 을 적용하여 (price가 하나의 상태가 될 수 있다.) 리팩토링을 해보자.
 
 
 
