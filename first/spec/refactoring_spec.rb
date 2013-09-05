@@ -5,9 +5,9 @@ require 'movie'
 require 'spec_helper'
 
 describe "Refactoring" do
-	let(:movie_regular) {Movie.new("프리퀀시",Movie::REGULAR)}
-	let(:movie_new_release) {Movie.new("나우유씨미",Movie::NEW_RELEASE)}
-	let(:movie_childrens) {Movie.new("드래곤볼",Movie::CHILDRENS)}
+	let(:movie_regular) {Movie.new("프리퀀시", RegularPrice.new)}
+	let(:movie_new_release) {Movie.new("나우유씨미",NewReleasePrice.new)}
+	let(:movie_childrens) {Movie.new("드래곤볼",ChildrensPrice.new)}
 
 	let(:rental_regular_three){Rental.new(movie_regular,3)}
 	let(:rental_regular_one){Rental.new(movie_regular,1)}
@@ -27,13 +27,13 @@ describe "Refactoring" do
 
 		it "movie test" do
 			movie_regular.title.should == "프리퀀시"
-			movie_regular.price_code.should == Movie::REGULAR
+			movie_regular.price.class.should == RegularPrice
 
 			movie_new_release.title.should == "나우유씨미"
-			movie_new_release.price_code.should == Movie::NEW_RELEASE
+			movie_new_release.price.class.should == NewReleasePrice
 
 			movie_childrens.title.should == "드래곤볼"
-			movie_childrens.price_code.should == Movie::CHILDRENS
+			movie_childrens.price.class.should == ChildrensPrice
 		end
 
 		it "retal test" do

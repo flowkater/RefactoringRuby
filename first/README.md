@@ -1,8 +1,12 @@
 ## 첫번째 리팩토링
+### 첫번째 리팩토링에서 사용한 리팩토링 기법 
 - 메서드 추출(Extract Method)
 - 메서드 이동(Move Method)
 - 임시 변수를 메서드 호출로 전환(Replace Temp with Query)
 - 루프를 컬렉션 클로저 메서드로 전환(Replace Loop with Collection)
+- 타입 코드를 상태/전략 패턴으로 전환(Replace Type Code with State/Strategy)
+- 필드 자체 캡슐화(Self Encapsulate Field)
+- 모듈 추출(Extract Module)
 
 ```ruby
 def statement
@@ -256,8 +260,114 @@ class Rental
 end
 ```  
 
-끝으로 상속 적용을 하는 데 단순히 상속 구조가 아닌 State Pattern 을 적용하여 (price가 하나의 상태가 될 수 있다.) 리팩토링을 해보자.
+끝으로 상속 적용을 하는 데 단순히 상속 구조가 아닌 State Pattern 을 적용하여 (price가 하나의 상태가 될 수 있다.) 리팩토링을 해보자.  
 
+**타입 코드를 상태/전략 패턴으로 전환(Replace Type Code with State/Strategy)**을 하기전에 **필드 자체 캡슐화(Self Encapsulate Field)**를 먼저 해서 클래스 캡슐화를 해주어야한다. (getter/setter)  
+
+```ruby
+class Movie
+	# ...
+	attr_reader :title, :price_code
+
+	def price_code=(value)
+		@price_code = value
+		@price = case price_code
+		when REGULAR then RegularPrice.new
+		when NEW_RELEASE then NewReleasePrice.new
+		when CHILDRENS then ChildrensPrice.new
+		end
+	end
+
+	def initialize(title, the_price_code)
+		@title, self.price_code = title, the_price_code
+	end
+
+	def charge(days_rented)
+		@price.charge(days_rented)
+	end
+	# ...
+end
+
+class RegularPrice
+	def charge(days_rented)
+		result = 2
+		result += (days_rented - 2) * 1.5 if days_rented > 2
+		result
+	end
+end
+
+class NewReleasePrice
+	def charge(days_rented)
+		days_rented * 3
+	end
+end
+
+class ChildrensPrice
+	def charge(days_rented)
+		result = 1.5
+		result += (days_rented - 3) * 1.5 if days_rented > 3
+		result
+	end
+end
+```  
+frequent_renter_points 메서드에도 **모듈 추출(Extract Module)** 기법을 적용하여 그 모듈을 RegularPrice, ChildrensPrice 에 넣고 NewReleasePrice 안에는 특수한 frequent_renter_points 를 구현한다.  
+
+```ruby
+module DefaultPrice
+	def frequent_renter_points(days_rented)
+		1
+	end
+end
+
+class RegularPrice
+	include DefaultPrice
+	# ...
+end
+
+class ChildrensPrice
+	include DefaultPrice
+	# ...
+end
+
+class NewReleasePrice
+	def frequent_renter_points(days_rented)
+		days_rented > 1 ? 2 : 1
+	end
+	# ...
+end
+
+class Movie
+	# ...
+	def frequent_renter_points(days_rented)
+		@price.frequent_renter_points(days_rented)
+	end
+end
+```  
+case 문을 제거한 Movie 클래스 전체 코드를 살펴보자.  
+
+```ruby
+class Movie
+	attr_writer :price
+	attr_reader :title, :price
+
+	def initialize(title, price)
+		@title, @price = title, price
+	end
+
+	def charge(days_rented)
+		@price.charge(days_rented)
+	end
+
+	def frequent_renter_points(days_rented)
+		@price.frequent_renter_points(days_rented)
+	end
+end
+```  
+State Pattern 을 적용하는 건 생각보다 복잡했지만 십 여개가 넘는 요금 관련 동작 및 메서드가 추가된다면 이렇게 하는 것이 추후 유지보수가 쉽게 된다.
+
+### 결론
+위의 여러 기법들을 통해 기능의 분배가 보다 균등해지고 코드의 유지보수가 수월해진다. 이 예제에서의 핵심은 '테스트' -> '사소한 수정' -> '테스트' -> '사소한 수정' 순으로 순환되는 리팩토링 리듬이다. 리팩토링이 신속하면서도 안전하게 이뤄질 수 있는 것은 바로 이 리듬 덕분이다.  
+전체 리팩 토링 결과 코드는 위 저장소 코드를 참조하고 리팩토링 과정은 각 커밋로그를 좇아가면서 볼수있다.
 
 
 

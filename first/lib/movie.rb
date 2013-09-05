@@ -1,33 +1,21 @@
 # encoding: UTF-8
+require 'regular_price'
+require 'new_release_price'
+require 'childrens_price'
+
 class Movie
-	REGULAR = 0
-	NEW_RELEASE = 1
-	CHILDRENS = 2
+	attr_writer :price
+	attr_reader :title, :price
 
-	attr_reader :title
-	attr_accessor :price_code
-
-	def initialize(title, price_code)
-		@title, @price_code = title, price_code
+	def initialize(title, price)
+		@title, @price = title, price
 	end
 
 	def charge(days_rented)
-		result = 0
-		case price_code
-		when REGULAR
-			result += 2
-			result += (days_rented - 2) * 1.5 if days_rented > 2
-		when NEW_RELEASE
-			result += days_rented * 3
-		when CHILDRENS
-			result += 1.5
-			result += (days_rented - 3) * 1.5 if days_rented > 3
-		end
-		result
+		@price.charge(days_rented)
 	end
 
 	def frequent_renter_points(days_rented)
-		# 최신물을 이틀 이상 대여하면 보너스 포인트를 더함
-		price_code == NEW_RELEASE && days_rented > 1 ? 2 : 1
+		@price.frequent_renter_points(days_rented)
 	end
 end
